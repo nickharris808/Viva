@@ -29,6 +29,14 @@ CARD_STYLE = """
     margin-bottom: 1rem;
 }
 
+/* Increase the font size for total score specifically */
+.card .total-score {
+    font-size: 1.2rem;     /* Adjust this to be bigger or smaller as needed */
+    color: #000;          /* Could style color (e.g., #d9534f for red) */
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
 .streamlit-expander {
     margin-top: 0.5rem;
 }
@@ -38,7 +46,7 @@ CARD_STYLE = """
 def display_card(row):
     """
     Renders a single 'card' containing basic info and 
-    an expander for the 1-Pager and Studies.
+    an expander for 1-Pager and Studies.
     """
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
@@ -51,14 +59,19 @@ def display_card(row):
         unsafe_allow_html=True
     )
 
-    # Orphan, Category, and Total Score
+    # Orphan, Category, and a bigger "Total Score"
     st.markdown(f"""
     <div class="small-text">
         <strong>Orphan:</strong> {row["Orphan"]}<br>
-        <strong>Category:</strong> {row["Category"]}<br>
-        <strong>Total Score:</strong> {row["Total Score"]}
+        <strong>Category:</strong> {row["Category"]}
     </div>
     """, unsafe_allow_html=True)
+
+    # Larger/bolder total score
+    st.markdown(
+        f'<span class="total-score"><strong>Total Score:</strong> {row["Total Score"]}</span>',
+        unsafe_allow_html=True
+    )
 
     # Inline expander for more details
     with st.expander("View More"):
@@ -74,8 +87,7 @@ def display_card(row):
 def display_cards_in_grid(df, columns_per_row=1):
     """
     Displays the DataFrame rows as a grid of cards.
-    For the requested changes, columns_per_row is set to 1
-    so each card occupies the full width.
+    columns_per_row=1 => a single column layout (one card per row).
     """
     for start_idx in range(0, len(df), columns_per_row):
         cols = st.columns(columns_per_row)
@@ -93,10 +105,10 @@ def main():
     # 1) New Title
     st.title("5052B Potential Drugs")
 
-    # 2) Centered Logo
+    # 2) Centered Logo with use_container_width
     st.image(
         "https://vmbpi.com/wp-content/uploads/2024/12/Asset-2@4x-8.png",
-        use_column_width=True
+        use_container_width=True
     )
 
     # 3) "How This Was Made" Section
@@ -123,7 +135,7 @@ Here’s an explanation of the three routes I used to identify potential drugs f
     # Orphan filter
     orphan_filter = st.selectbox("Orphan:", ["All", "Yes", "No"], index=0)
 
-    # Category filter (pull from data or define manually)
+    # Category filter
     if "Category" in df.columns and not df["Category"].dropna().empty:
         category_options = sorted(df["Category"].dropna().unique().tolist())
     else:
@@ -145,7 +157,6 @@ Here’s an explanation of the three routes I used to identify potential drugs f
     if filtered_df.empty:
         st.warning("No results found for the selected filters.")
     else:
-        # Single column layout
         display_cards_in_grid(filtered_df, columns_per_row=1)
 
 
