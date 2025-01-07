@@ -29,7 +29,6 @@ CARD_STYLE = """
     margin-bottom: 1rem;
 }
 
-/* Optional: ensure expanders look good inside the card */
 .streamlit-expander {
     margin-top: 0.5rem;
 }
@@ -38,7 +37,8 @@ CARD_STYLE = """
 
 def display_card(row):
     """
-    Renders a single 'card' containing basic info and an expander for details.
+    Renders a single 'card' containing basic info and 
+    an expander for the 1-Pager and Studies.
     """
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
@@ -51,8 +51,7 @@ def display_card(row):
         unsafe_allow_html=True
     )
 
-    # Show Orphan, Category, and Total Score
-    # Using <br> to place each item on a separate line
+    # Orphan, Category, and Total Score
     st.markdown(f"""
     <div class="small-text">
         <strong>Orphan:</strong> {row["Orphan"]}<br>
@@ -61,7 +60,7 @@ def display_card(row):
     </div>
     """, unsafe_allow_html=True)
 
-    # Inline expander for more details (1-Pager & Studies)
+    # Inline expander for more details
     with st.expander("View More"):
         st.write("### 1-Pager")
         st.markdown(row["1-Pager"] if pd.notnull(row["1-Pager"]) else "No 1-Pager available.")
@@ -72,17 +71,14 @@ def display_card(row):
     st.markdown('</div>', unsafe_allow_html=True)
 
 
-def display_cards_in_grid(df, columns_per_row=2):
+def display_cards_in_grid(df, columns_per_row=1):
     """
     Displays the DataFrame rows as a grid of cards.
-    :param df: Filtered Pandas DataFrame
-    :param columns_per_row: How many cards wide each row is
+    For the requested changes, columns_per_row is set to 1
+    so each card occupies the full width.
     """
     for start_idx in range(0, len(df), columns_per_row):
-        # Create a set of columns for this 'row' of cards
         cols = st.columns(columns_per_row)
-
-        # For each card in this row
         for col_idx in range(columns_per_row):
             row_idx = start_idx + col_idx
             if row_idx < len(df):
@@ -91,21 +87,43 @@ def display_cards_in_grid(df, columns_per_row=2):
 
 
 def main():
-    # Inject our custom CSS for the card style
+    # Inject custom CSS
     st.markdown(CARD_STYLE, unsafe_allow_html=True)
 
-    st.title("Drug Data Visualization with Cards (and Total Score)")
+    # 1) New Title
+    st.title("5052B Potential Drugs")
 
-    # ----- 1. Read the CSV -----
+    # 2) Centered Logo
+    st.image(
+        "https://vmbpi.com/wp-content/uploads/2024/12/Asset-2@4x-8.png",
+        use_column_width=True
+    )
+
+    # 3) "How This Was Made" Section
+    st.subheader("How This Was Made")
+    st.markdown("""
+Here’s an explanation of the three routes I used to identify potential drugs for 5052B:
+
+1. **StuffThatWorks Database**:  
+   I scraped the StuffThatWorks database, which aggregates patient-reported outcomes for various medications treating chronic diseases. By focusing on off-label drugs with high success rates in treating the target disease, I was able to identify candidates that have shown real-world effectiveness.
+
+2. **Drug-Supplement Combinations**:  
+   Using an AI reasoning model (o1), I explored potential drug-supplement combinations. The AI analyzed how specific supplements could synergize with existing drugs, enhancing efficacy or addressing complementary aspects of the disease. This route highlights innovative pairings that may not yet be widely recognized but could provide meaningful therapeutic benefits.
+
+3. **Novel Pathway Exploration**:  
+   Again leveraging the AI reasoning model (o1), I researched emerging issues, targets, and pathways that may be linked to the disease. This includes investigating conditions with overlapping mechanisms, such as postural orthostatic tachycardia syndrome (POTS), which I have personal experience with. This route focuses on identifying underexplored or novel pathways that could open doors to groundbreaking treatments.
+""")
+
+    # ----- Read CSV -----
     df = pd.read_csv("data.csv")
 
-    # ----- 2. Filters -----
+    # ----- Filters -----
     st.subheader("Filters")
     
     # Orphan filter
     orphan_filter = st.selectbox("Orphan:", ["All", "Yes", "No"], index=0)
 
-    # Category filter - derive options from data or set them manually
+    # Category filter (pull from data or define manually)
     if "Category" in df.columns and not df["Category"].dropna().empty:
         category_options = sorted(df["Category"].dropna().unique().tolist())
     else:
@@ -122,13 +140,13 @@ def main():
     if category_filter:
         filtered_df = filtered_df[filtered_df["Category"].isin(category_filter)]
 
-    # ----- 3. Display Cards -----
+    # ----- Display Cards (Single Column) -----
     st.subheader("Filtered Results")
     if filtered_df.empty:
         st.warning("No results found for the selected filters.")
     else:
-        # Show the cards in a grid of 2 columns per row. Adjust as needed.
-        display_cards_in_grid(filtered_df, columns_per_row=2)
+        # Single column layout
+        display_cards_in_grid(filtered_df, columns_per_row=1)
 
 
 if __name__ == "__main__":
