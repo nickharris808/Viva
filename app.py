@@ -133,10 +133,10 @@ Here’s an explanation of the three routes I used to identify potential drugs f
     st.subheader("Filters")
     
     # Orphan filter
-    orphan_filter = st.selectbox("Orphan:", ["All", "Yes", "No"], index=0)
+    orphan_filter = st.selectbox("Orphan Disease?:", ["All", "Yes", "No"], index=0)
 
     # Category filter
-    if "Category" in df.columns and not df["Category"].dropna().empty:
+    if "Category" in df.columns and not df["Drug Discovery Method"].dropna().empty:
         category_options = sorted(df["Category"].dropna().unique().tolist())
     else:
         category_options = ["Novel Pathway", "StuffThatWorks", "Drug-Supplement Combo"]
