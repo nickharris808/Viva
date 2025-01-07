@@ -123,6 +123,8 @@ Here’s an explanation of the three routes I used to identify potential drugs f
 
 3. **Novel Pathway Exploration**:  
    Again leveraging the AI reasoning model (o1), I researched emerging issues, targets, and pathways that may be linked to the disease. This includes investigating conditions with overlapping mechanisms, such as postural orthostatic tachycardia syndrome (POTS), which I have personal experience with. This route focuses on identifying underexplored or novel pathways that could open doors to groundbreaking treatments.
+
+[See all drugs in spreadsheet form here](https://docs.google.com/spreadsheets/d/1n6myfBgMfJnCiR6hU3Yy4bvmJxUmN0CTiPEMwNuQqFU/edit?usp=sharing)
 """)
 
     # ----- Read CSV -----
