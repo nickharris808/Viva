@@ -102,7 +102,7 @@ def main():
     st.markdown(CARD_STYLE, unsafe_allow_html=True)
 
     # 1) New Title
-    st.title("5052B Potential Drugs")
+    st.title("505(b)(2) Potential Drugs")
 
     # 2) Centered Logo with use_container_width
     st.image(
