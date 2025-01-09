@@ -76,7 +76,7 @@ def display_card(row):
     # Inline expander for more details
     with st.expander("View More"):
         st.write("### Patent")
-        st.markdown(row["1-Pager"] if pd.notnull(row["1-Pager"]) else "No 1-Pager available.")
+        st.markdown(row["Patent"] if pd.notnull(row["Patent"]) else "No 1-Pager available.")
         st.write("### Studies")
         st.markdown(row["Studies"] if pd.notnull(row["Studies"]) else "No Studies available.")
         st.write("### 1-Pager")
